@@ -20,9 +20,9 @@ export const App = () => {
     setImages([]);
     setPage(1);
   };
-  useEffect(() => {
-    setIsLoadMore(Math.ceil(showBtn / 12));
-  }, [showBtn]);
+  // useEffect(() => {
+  //   setIsLoadMore(Math.ceil(showBtn / 12));
+  // }, [showBtn]);
   useEffect(() => {
     if (query === '') {
       return;
@@ -43,7 +43,8 @@ export const App = () => {
     };
 
     fetchItems();
-  }, [query, page]);
+    setIsLoadMore(Math.ceil(showBtn / 12));
+  }, [query, page, showBtn]);
   const handleLoadMore = () => {
     setPage(prevState => prevState + 1);
   };

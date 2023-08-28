@@ -14,7 +14,7 @@ export const ImageGalleryItem = ({ webImg, largeImg }) => {
         openModal={togleModal}
         closeModal={togleModal}
         largeImg={largeImg}
-      ></Modals>
+      />
     </Items>
   );
 };
