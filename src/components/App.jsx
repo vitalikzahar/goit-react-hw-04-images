@@ -12,7 +12,7 @@ export const App = () => {
   const [images, setImages] = useState([]);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
-  const [showBtn, setShowBtn] = useState('');
+
   const [isLoadMore, setIsLoadMore] = useState(null);
 
   const changeQuery = newQuery => {
@@ -20,31 +20,20 @@ export const App = () => {
     setImages([]);
     setPage(1);
   };
-  // useEffect(() => {
-  //   setIsLoadMore(Math.ceil(showBtn / 12));
-  // }, [showBtn]);
+
   useEffect(() => {
-    if (query === '') {
-      return;
-    }
-    const fetchItems = async () => {
-      try {
-        setLoading(true);
+    if (!query) return;
+    setLoading(true);
+    getResponse(query, page)
+      .then(responce => {
+        setImages(prevState => [...prevState, ...responce.hits]);
 
-        return getResponse(query, page).then(responce => {
-          setImages(prevState => [...prevState, ...responce.hits]);
-          setShowBtn(responce.totalHits);
-        });
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoading(false);
-      }
-    };
+        setIsLoadMore(page < Math.ceil(responce.totalHits / 12));
+      })
+      .catch()
+      .finally(() => setLoading(false));
+  }, [query, page]);
 
-    fetchItems();
-    setIsLoadMore(Math.ceil(showBtn / 12));
-  }, [query, page, showBtn]);
   const handleLoadMore = () => {
     setPage(prevState => prevState + 1);
   };
@@ -54,7 +43,7 @@ export const App = () => {
       <Searchbar changeQuery={changeQuery}></Searchbar>
       <ImageGallery cards={images}></ImageGallery>
       <Loader visible={loading}></Loader>
-      {page < isLoadMore && <Button moreCards={handleLoadMore}></Button>}
+      {isLoadMore && <Button moreCards={handleLoadMore} />}
     </AppGallary>
   );
 };
